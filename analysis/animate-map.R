@@ -38,10 +38,11 @@ d2 <- vessel_logs_sel %>%
     grepl("cruiser", vessel_type) ~ "Other cruiser",
     TRUE ~ "Other"
   )) %>%
-  mutate(vessel_type_lumped = as.factor(vessel_type_lumped)) %>%
+  mutate(vessel_type_lumped = fct_infreq(vessel_type_lumped)) %>%
   left_join(events, by = c("date" = "start_date")) %>%
   arrange(date) %>%
-  fill(event, .direction = "down")
+  fill(event, .direction = "down") %>%
+  mutate(event = replace_na(event, replace = ""))
 
 pal <- brewer.pal(9, "Set1")
 names(pal) <- unique(d2$vessel_type_lumped)
@@ -71,5 +72,3 @@ for(i in 1:length(all_dates)){
   print(m)
   dev.off()         
 }
-vessel_logs_sel %>%
-  count(vessel_type, sort = TRUE)
