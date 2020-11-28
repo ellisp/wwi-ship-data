@@ -16,6 +16,10 @@ all_links <- p1 %>%
 vessel_logs_l <- list()
 all_links <- all_links[!is.na(all_links)]
 
+# There is an error: JMS Welland, should be HMS Welland. URL is correct but
+# <a href= is wrong.
+all_links <- gsub("JMS_", "HMS_", all_links)
+
 i = 1
 for(i in i:length(all_links)){
   cat(i, " ")
@@ -53,7 +57,10 @@ for(i in i:length(all_links)){
     group_by(entry_id) %>%
     summarise(date = unique(last_date),
               position = txt2[is_position],
-              position_description = txt2[is_position_description],
+              # position_description is a bit of a guess, sometimes there are 0,
+              # 1 or 2 of them (not necessarily correct), so we just take the
+              # first one and hope for the best.
+              position_description = txt2[is_position_description][1],
               log_entry = paste(txt2, collapse = "\n"),
               .groups = "drop") %>%
     mutate(url = the_url,
@@ -69,3 +76,5 @@ for(i in i:length(all_links)){
 vessel_logs <- bind_rows(vessel_logs_l)
 save(vessel_logs, file = "data/vessel_logs.rda")
 
+vessel_logs_sel <- select(vessel_logs, -log_entry)
+save(vessel_logs_sel, file = "data/vessel_logs_sel.rda")
