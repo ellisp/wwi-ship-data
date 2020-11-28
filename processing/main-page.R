@@ -59,6 +59,5 @@ for(i in 1:length(all_links)){
 }
 
 vessel_logs <- bind_rows(vessel_logs_l)
-dir.create("data", showWarnings = FALSE)
 save(vessel_logs, file = "data/vessel_logs.rda")
 

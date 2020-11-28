@@ -1,0 +1,1 @@
+Holds temporary images used as frames for making a movie
