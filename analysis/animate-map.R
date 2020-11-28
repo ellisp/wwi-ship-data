@@ -43,7 +43,7 @@ for(i in 1:length(all_dates)){
     theme(legend.position = "bottom",
           plot.title = element_text(family = "Sarala", hjust = 0.5),
           plot.caption = element_text(colour = "grey70"),
-          panel.background = element_rect(fill = "grey98", colour = NA))
+          panel.background = element_rect(fill = "#F2F9FC", colour = NA))
   
   CairoPNG(glue("tmpimg/{i + 1000}.png"), 2000, 1300, res = 200)
   print(m)
