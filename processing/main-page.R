@@ -29,8 +29,6 @@ for(i in 1:length(all_links)){
     html_nodes("p") %>%
     html_text()
   
-  txt[47]
-  
   d <- tibble(txt) %>%
     mutate(txt2 = gsub("\r", " ", txt, fixed = TRUE),
            txt2 = gsub("\n", " ", txt2, fixed = TRUE),
@@ -44,16 +42,23 @@ for(i in 1:length(all_links)){
     fill(last_date) %>%
     filter(entry_id >= 1)
   
-  vessel_logs_l[[1]] <- d %>%
+  vessel_logs_l[[i]] <- d %>%
     group_by(entry_id) %>%
     summarise(date = unique(last_date),
               position = txt2[is_position],
+              position_description = txt2[is_position_description],
               log_entry = paste(txt2, collapse = "\n"),
               .groups = "drop") %>%
     mutate(url = the_url,
-           vessel = the_vessel)
+           vessel = the_vessel,
+           vessel_id = i,
+           lat = str_extract(position, "Lat.*?\\.[0-9]+"),
+           long = str_extract(position, "Lon.*?\\.[0-9]+"),
+           lat = as.numeric(gsub("Lat ", "", lat)),
+           long = as.numeric(gsub("Long ", "", long)))
 }
 
+vessel_logs <- bind_rows(vessel_logs_l)
+dir.create("data", showWarnings = FALSE)
+save(vessel_logs, file = "data/vessel_logs.rda")
 
-
- vessel_logs <- bind_rows(vessel_logs_l)
