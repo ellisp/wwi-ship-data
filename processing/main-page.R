@@ -16,7 +16,8 @@ all_links <- p1 %>%
 vessel_logs_l <- list()
 all_links <- all_links[!is.na(all_links)]
 
-for(i in 1:length(all_links)){
+i = 1
+for(i in i:length(all_links)){
   cat(i, " ")
   the_url <- glue("https://www.naval-history.net/{all_links[i]}")
   
@@ -39,7 +40,7 @@ for(i in 1:length(all_links)){
     mutate(txt2 = gsub("\r", " ", txt, fixed = TRUE),
            txt2 = gsub("\n", " ", txt2, fixed = TRUE),
            txt2 = str_squish(txt2)) %>%
-    mutate(is_date = grepl("^[0-9]+ [a-zA-Z]+ 191[0-9]", txt2),
+    mutate(is_date = grepl("^[0-9]+ [a-zA-Z]+ 19[0-9][0-9]$", txt2),
            entry_id = cumsum(is_date),
            is_position = grepl("^Lat.*Long", txt2),
            is_position_description = lag(is_date),
