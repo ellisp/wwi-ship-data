@@ -25,6 +25,12 @@ for(i in 1:length(all_links)){
   
   this_ship_page <- read_html(the_url)
   
+  vessel_type <- this_ship_page %>%
+    html_nodes("title") %>%
+    html_text() %>%
+    str_replace(" - British warships of World War 1", "") %>%
+    str_replace(".*, ", "")
+  
   txt <- this_ship_page %>%
     html_nodes("p") %>%
     html_text()
@@ -51,6 +57,7 @@ for(i in 1:length(all_links)){
               .groups = "drop") %>%
     mutate(url = the_url,
            vessel = the_vessel,
+           vessel_type = vessel_type,
            vessel_id = i,
            lat = str_extract(position, "Lat.*?\\.[0-9]+"),
            long = str_extract(position, "Lon.*?\\.[0-9]+"),
