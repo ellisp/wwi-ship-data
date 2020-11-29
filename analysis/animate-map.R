@@ -37,8 +37,8 @@ phases <- tribble(~start_date, ~phase,
 battles <- tribble(~date, ~battle, ~duration, ~lat, ~long,
                    "1914-08-16", "Battle of Antivari", 1, 42 + 10/ 60, 19 + 10 / 60,
                   "1914-08-28", "First battle of Heligoland Bight", 1, 54+19/60, 7.51/60,
-                  "1914-11-01", "Battle of Coronel", 1, 36 + 59.15/60, 73 + 48.14/60,
-                  "1914-12-08", "Battle of Falkland Islands", 1, 52 + 29.95/60, 56 + 9.98/60,
+                  "1914-11-01", "Battle of Coronel", 1, -(36 + 59.15/60), -(73 + 48.14/60),
+                  "1914-12-08", "Battle of Falkland Islands", 1, -(52 + 29.95/60), -(56 + 9.98/60),
                   "1915-01-24", "Battle of Dogger Bank", 1, 54 + 33.5/60, 5 + 27.85/60,
                   "1915-02-17", "Dardanelles campaign", 327, 40 + 2/60, 26 + 4/60,
                   "1915-05-01", "Battle off Noordhinder Bank", 1, 51 + 39/60, 2 + 41/60,
@@ -85,6 +85,8 @@ d2 <- vessel_logs_sel %>%
 
 pal <- brewer.pal(8, "Dark2")
 names(pal) <- levels(d2$vessel_type_lumped)
+pal["Other"] <- "#E6FA05"
+pal["Sloop"] <- "#7CEA7C"
 
 for(i in 1:length(all_dates)){
   the_date <- all_dates[i]
@@ -94,6 +96,7 @@ for(i in 1:length(all_dates)){
   battle_data <- filter(battles_long, date == the_date)
   battle_col <- "red"
   sea_col <- "#DCEAFA"
+  comment_col <- "grey50"
   date_col <- case_when(
     the_date < "1914-08-01" ~ "blue",
     the_date > "1918-11-11" ~ "blue",
@@ -123,11 +126,11 @@ for(i in 1:length(all_dates)){
     coord_sf() +
     theme_void(base_family = main_family) +
     # The date, in the South Atlantic:
-    annotate("text", x = 22, y = -60, label = format(the_date, '%d %B %Y'), 
+    annotate("text", x = 22, y = -60, label = format(the_date, '%e %B %Y'), 
              colour = date_col, hjust = 1) +
     # Summary text (in WWI or not) just below the date:
-    annotate("text", x = 3.7, y = -67, label = date_sum_text, colour = "grey50", 
-             hjust = 0.5, size = 2.5) +
+    annotate("text", x = 22, y = -67, label = date_sum_text, colour = comment_col, 
+             hjust = 1, size = 2.5) +
     scale_colour_manual(values = pal, labels = names(pal), drop = FALSE) +
     labs(subtitle = unique(ships_data$phase),
          title = glue("Daily locations of surviving Royal Navy Ships 1914 to 1920"),
@@ -135,7 +138,7 @@ for(i in 1:length(all_dates)){
          caption = "Locations from log books compiled by naval-history.net; map by freerangestats.info") +
     theme(legend.position = "bottom",
           plot.title = element_text(family = "Sarala", hjust = 0.5),
-          plot.subtitle = element_text(hjust = 0.5, colour = "grey70"),
+          plot.subtitle = element_text(hjust = 0.5, colour = comment_col),
           plot.caption = element_text(colour = "grey70", size = 8),
           legend.spacing.x = unit(0, "cm"),
           legend.text = element_text(hjust = 0, margin = margin(l = -2, r = 15)),
