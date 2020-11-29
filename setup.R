@@ -10,3 +10,7 @@ library(here)
 library(RColorBrewer)
 library(extrafont)
 library(sf)
+
+main_family <- "Roboto"
+
+ggplot2::update_geom_defaults("text", list(family = main_family))
