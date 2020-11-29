@@ -36,7 +36,7 @@ phases <- tribble(~start_date, ~phase,
 # are excluded as no UK warships there
 battles <- tribble(~date, ~battle, ~duration, ~lat, ~long,
                    "1914-08-16", "Battle of Antivari", 1, 42 + 10/ 60, 19 + 10 / 60,
-                  "1914-08-28", "First battle of Heligoland Bight", 1, 54+19/60, 7.51/60,
+                  "1914-08-28", "First battle of Heligoland Bight", 1, 54+19/60, 7 + 51/60,
                   "1914-11-01", "Battle of Coronel", 1, -(36 + 59.15/60), -(73 + 48.14/60),
                   "1914-12-08", "Battle of Falkland Islands", 1, -(52 + 29.95/60), -(56 + 9.98/60),
                   "1915-01-24", "Battle of Dogger Bank", 1, 54 + 33.5/60, 5 + 27.85/60,
@@ -83,20 +83,24 @@ d2 <- vessel_logs_sel %>%
   fill(phase, .direction = "down") %>%
   mutate(phase = replace_na(phase, replace = ""))
 
+#---------------Colours-----------------
+
 pal <- brewer.pal(8, "Dark2")
 names(pal) <- levels(d2$vessel_type_lumped)
 pal["Other"] <- "#E6FA05"
 pal["Sloop"] <- "#7CEA7C"
 
+battle_col <- "black"
+sea_col <- "#DCEAFA"
+comment_col <- "grey50"
+
+#-------------main loop------------------
 for(i in 1:length(all_dates)){
   the_date <- all_dates[i]
   ships_data <- d2 %>%
     filter(date == the_date)
   
   battle_data <- filter(battles_long, date == the_date)
-  battle_col <- "red"
-  sea_col <- "#DCEAFA"
-  comment_col <- "grey50"
   date_col <- case_when(
     the_date < "1914-08-01" ~ "blue",
     the_date > "1918-11-11" ~ "blue",
