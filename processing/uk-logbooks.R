@@ -2,6 +2,13 @@
 url1 <- "https://www.naval-history.net/OWShips-LogBooksWW1.htm"
 
 
+drop_rn <- function(txt){
+  txt2 = gsub("\r", " ", txt, fixed = TRUE)
+  txt2 = gsub("\n", " ", txt2, fixed = TRUE)
+  txt2 = str_squish(txt2)
+  return(txt2)
+}
+
 
 
 p1 <- read_html(url1)
@@ -33,7 +40,11 @@ for(i in i:length(all_links)){
   vessel_type <- this_ship_page %>%
     html_nodes("title") %>%
     html_text() %>%
+    drop_rn() %>%
     str_replace(" - British warships of World War 1", "") %>%
+    str_replace(" - British Empire warships of World War 1", "") %>%
+    str_replace(" - British auxiliary ships of World War 1", "") %>%
+    str_replace(" - logbooks of British warships of World War 1", "") %>%
     str_replace(".*, ", "")
   
   txt <- this_ship_page %>%
@@ -41,13 +52,12 @@ for(i in i:length(all_links)){
     html_text()
   
   d <- tibble(txt) %>%
-    mutate(txt2 = gsub("\r", " ", txt, fixed = TRUE),
-           txt2 = gsub("\n", " ", txt2, fixed = TRUE),
-           txt2 = str_squish(txt2)) %>%
+   mutate(txt2 = drop_rn(txt)) %>%
     mutate(is_date = grepl("^[0-9]+ [a-zA-Z]+ 19[0-9][0-9]$", txt2),
            entry_id = cumsum(is_date),
            is_position = grepl("^Lat.*Long", txt2),
            is_position_description = lag(is_date),
+           is_weather = grepl("^Weather", txt2),
            last_date = ifelse(is_date, txt2, NA),
            last_date = as.Date(last_date, format = "%d %b %Y")) %>%
     fill(last_date) %>%
@@ -61,6 +71,7 @@ for(i in i:length(all_links)){
               # 1 or 2 of them (not necessarily correct), so we just take the
               # first one and hope for the best.
               position_description = txt2[is_position_description][1],
+              weather = txt2[is_weather][1],
               log_entry = paste(txt2, collapse = "\n"),
               .groups = "drop") %>%
     mutate(url = the_url,
@@ -70,7 +81,8 @@ for(i in i:length(all_links)){
            lat = str_extract(position, "Lat.*?\\.[0-9]+"),
            long = str_extract(position, "Lon.*?\\.[0-9]+"),
            lat = as.numeric(gsub("Lat ", "", lat)),
-           long = as.numeric(gsub("Long ", "", long)))
+           long = as.numeric(gsub("Long ", "", long)),
+           weather = str_squish(gsub("Weather:", "", weather, ignore.case = TRUE)))
 }
 
 vessel_logs <- bind_rows(vessel_logs_l)
