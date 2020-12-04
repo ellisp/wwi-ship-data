@@ -137,13 +137,16 @@ for(i in 1:length(all_dates)){
              hjust = 1, size = 2.5) +
     scale_colour_manual(values = pal, labels = names(pal), drop = FALSE) +
     labs(subtitle = unique(ships_data$phase),
-         title = glue("Daily locations of surviving Royal Navy Ships 1914 to 1920"),
+         title = glue("Daily locations of Royal Navy Ships 1914 to 1920"),
          colour = "",
-         caption = "Locations from log books compiled by naval-history.net; map by freerangestats.info") +
+         caption = str_wrap("Locations of 314 UK Royal Navy from log books compiled by 
+         naval-history.net; map by freerangestats.info. Ships that survived the 
+         war and that travelled out of home waters were more likely to be selected 
+         for transcription, which was conduct by volunteers for the 'Zooniverse Old Weather Project'", 160)) +
     theme(legend.position = "bottom",
           plot.title = element_text(family = "Sarala", hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5, colour = comment_col),
-          plot.caption = element_text(colour = "grey70", size = 8),
+          plot.caption = element_text(colour = "grey70", size = 8, hjust = 0),
           legend.spacing.x = unit(0, "cm"),
           legend.text = element_text(hjust = 0, margin = margin(l = -2, r = 15)),
           legend.background = element_rect(fill = sea_col, colour = NA),
