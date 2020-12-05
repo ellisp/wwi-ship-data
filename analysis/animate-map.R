@@ -1,6 +1,17 @@
 # create an animated map of the world with the location of Royal Navy ships
-# on each day.
+# on each day. You need to have earlier run /processing/uk-logbooks.R to
+# screenscrape the ship location data and save it in the data/ folder.
+#
+# Peter Ellis November 2020
 
+
+#--------------------Functionality-----------------
+
+source("setup.R")
+load("data/vessel_logs_sel.rda")
+
+
+#------------------------Phases of the war---------------
 # Adapted from
 # https://www.loc.gov/collections/stars-and-stripes/articles-and-essays/a-world-at-war/timeline-1914-1921/
 # and https://en.wikipedia.org/wiki/Allied_intervention_in_the_Russian_Civil_War
@@ -31,9 +42,11 @@ phases <- tribble(~start_date, ~phase,
                  ) %>%
   mutate(start_date = as.Date(start_date))
 
-# From https://en.wikipedia.org/wiki/List_of_naval_battles#World_War_I_(1914%E2%80%9318)
-# Note the battle of Penang, Cocos, Cape Sarych, Gotland, Kirpen Island 
-# are excluded as no UK warships there
+#------------------Naval battle dates (that UK involved in)"
+# From
+# https://en.wikipedia.org/wiki/List_of_naval_battles#World_War_I_(1914%E2%80%9318)
+# Note the battle of Penang, Cocos, Cape Sarych, Gotland, Kirpen Island are
+# excluded as no UK warships there
 battles <- tribble(~date, ~battle, ~duration, ~lat, ~long,
                    "1914-08-16", "Battle of Antivari", 1, 42 + 10/ 60, 19 + 10 / 60,
                   "1914-08-28", "First battle of Heligoland Bight", 1, 54+19/60, 7 + 51/60,
@@ -58,8 +71,10 @@ battles_long <- battles[rep(1:nrow(battles), battles$duration + 5), ] %>%
   mutate(status = ifelse(max(date) - date >= 5, "Battle", "Aftermath"),
          point_size = ifelse(status == "Battle", 5.5, max(date) - date + 0.5))
 
+
+#------------------Data prep------------------
 all_dates <- sort(unique(vessel_logs_sel$date))
-all_dates <- all_dates[all_dates >= "1913-07-01" & all_dates <= "1920-12-31"]
+all_dates <- all_dates[all_dates >= "1914-06-01" & all_dates <= "1919-12-31"]
 
 d2 <- vessel_logs_sel %>%
   mutate(vessel_type = tolower(vessel_type)) %>%
@@ -95,6 +110,7 @@ sea_col <- "#DCEAFA"
 comment_col <- "grey50"
 
 #-------------main loop------------------
+# Takes a bit over an hour to run this. 
 for(i in 1:length(all_dates)){
   the_date <- all_dates[i]
   ships_data <- d2 %>%
@@ -130,22 +146,24 @@ for(i in 1:length(all_dates)){
     coord_sf() +
     theme_void(base_family = main_family) +
     # The date, in the South Atlantic:
-    annotate("text", x = 22, y = -60, label = format(the_date, '%e %B %Y'), 
+    annotate("text", x = 22, y = -64, label = format(the_date, '%e %B %Y'), 
              colour = date_col, hjust = 1) +
-    # Summary text (in WWI or not) just below the date:
-    annotate("text", x = 22, y = -67, label = date_sum_text, colour = comment_col, 
-             hjust = 1, size = 2.5) +
+    # Summary text next the date:
+    annotate("text", x = 24, y = -63, 
+             label = glue("{date_sum_text}: {unique(ships_data$phase)}"), 
+             colour = comment_col, 
+             hjust = 0, size = 2.5) +
     scale_colour_manual(values = pal, labels = names(pal), drop = FALSE) +
-    labs(subtitle = unique(ships_data$phase),
-         title = glue("Daily locations of Royal Navy Ships 1914 to 1920"),
+    labs(title = glue("Daily locations of Royal Navy Ships 1914 to 1919"),
          colour = "",
          caption = str_wrap("Locations of 314 UK Royal Navy from log books compiled by 
          naval-history.net; map by freerangestats.info. Ships that survived the 
-         war and that travelled out of home waters were more likely to be selected 
-         for transcription, which was conduct by volunteers for the 'Zooniverse Old Weather Project'", 160)) +
+         war and that travelled out of UK home waters were more likely to be selected 
+         for transcription, which was conduct by volunteers for the 'Zooniverse Old Weather Project'.", 
+                            # margin() theme on left and right doesn't work for plot.caption so we add our own:
+                            width = 180, indent = 2, exdent = 2)) +
     theme(legend.position = "bottom",
           plot.title = element_text(family = "Sarala", hjust = 0.5),
-          plot.subtitle = element_text(hjust = 0.5, colour = comment_col),
           plot.caption = element_text(colour = "grey70", size = 8, hjust = 0),
           legend.spacing.x = unit(0, "cm"),
           legend.text = element_text(hjust = 0, margin = margin(l = -2, r = 15)),
@@ -153,7 +171,15 @@ for(i in 1:length(all_dates)){
           # sea colour:
           panel.background = element_rect(fill = sea_col, colour = NA))
   
-  CairoPNG(glue("tmpimg/{i + 1000}.png"), 2000, 1300, res = 200)
+  CairoPNG(glue("tmpimg/{i + 1000}.png"), 2000, 2000 * 9 / 16, res = 200)
   print(m)
   dev.off()         
 }
+
+# 20 October 2015 a problem
+
+# MP4 made with Windows video editor
+# GIF made with Image Magick via 
+# magick -delay 10 115[4-9].png -delay 10 11[6-9]*.png -delay 50 1200.png ../output/0199-wwi-uk.gif
+
+

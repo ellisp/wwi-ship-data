@@ -1,7 +1,15 @@
+# Scrapes the locations of 314 UK ships in World War I
+# from naval-history.net; the hard work to transcribe locations done
+# by the Zooniverse old weather project
+#
+# Peter Ellis November 2020
 
-url1 <- "https://www.naval-history.net/OWShips-LogBooksWW1.htm"
 
+#-------------------Functionality---------
+source("setup.R")
 
+#' Drop \r and \n characters from text
+#' 
 drop_rn <- function(txt){
   txt2 = gsub("\r", " ", txt, fixed = TRUE)
   txt2 = gsub("\n", " ", txt2, fixed = TRUE)
@@ -9,8 +17,9 @@ drop_rn <- function(txt){
   return(txt2)
 }
 
-
-
+#-------------------Main page and all the links----------------
+# Main page, which has links to all the ship-specific pages
+url1 <- "https://www.naval-history.net/OWShips-LogBooksWW1.htm"
 p1 <- read_html(url1)
 
 
@@ -27,6 +36,11 @@ all_links <- all_links[!is.na(all_links)]
 # <a href= is wrong.
 all_links <- gsub("JMS_", "HMS_", all_links)
 
+#-----------------Main loop - one ship at a time----------------
+
+# Loop from "i" to the end means if we get interrupted we can start
+# the loop again from wherever it got up to. This loop takes about 30-60 minutes
+# to run through all 314 ships.
 i = 1
 for(i in i:length(all_links)){
   cat(i, " ")
@@ -85,8 +99,10 @@ for(i in i:length(all_links)){
            weather = str_squish(gsub("Weather:", "", weather, ignore.case = TRUE)))
 }
 
+# save version with all the text (about 25 MB)
 vessel_logs <- bind_rows(vessel_logs_l)
 save(vessel_logs, file = "data/vessel_logs.rda")
 
+# Cut down version of the data without the original log text (about 2MB):
 vessel_logs_sel <- select(vessel_logs, -log_entry)
 save(vessel_logs_sel, file = "data/vessel_logs_sel.rda")
