@@ -35,11 +35,11 @@ phases <- tribble(~start_date, ~phase,
                  "1918-03-21", "Final German offensive",
                  "1918-09-26", "Final allied offensive begins at Meusse-Argonne",
                  "1918-11-05", "Armistice talks",
-                 "1918-12-01", "British and American forces enter Germany",
+                 "1918-12-01", "Allied forces enter Germany",
                  "1919-01-18", "Peace conference begins at Paris",
                  "1919-06-28", "Treat of Versailles signed",
-                 "1919-09-27", "Last Allied troops leave Archangel, effectively ending involvement in the Russian civil war",
-                 "1919-11-19", "US Senate fails to ratify Treaty of Versailles"
+                 "1919-09-27", "Last Allied troops leave Archangel",
+                 "1919-11-19", "US fails to ratify Treaty of Versailles"
                  ) %>%
   mutate(start_date = as.Date(start_date))
 
