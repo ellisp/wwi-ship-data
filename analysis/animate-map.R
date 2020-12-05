@@ -37,7 +37,7 @@ phases <- tribble(~start_date, ~phase,
                  "1918-11-05", "Armistice talks",
                  "1918-12-01", "Allied forces enter Germany",
                  "1919-01-18", "Peace conference begins at Paris",
-                 "1919-06-28", "Treat of Versailles signed",
+                 "1919-06-28", "Treaty of Versailles signed",
                  "1919-09-27", "Last Allied troops leave Archangel",
                  "1919-11-19", "US fails to ratify Treaty of Versailles"
                  ) %>%
