@@ -25,15 +25,16 @@ phases <- tribble(~start_date, ~phase,
                  "1914-09-13", "Stalemate in the west after the First Battle of the Marne",
                  "1914-11-02", "Dardanelles build-up commences",
                  "1915-04-25", "Allied troops on Gallipoli Peninsula",
-                 "1916-02-21", "Battle of Verdun commences",
-                 "1916-07-01", "Battle of the Somme commences",
+                 "1915-12-15", "Allies evacuate Gallipoli",
+                 "1916-02-21", "Battle of Verdun",
+                 "1916-07-01", "Battle of the Somme",
                  "1917-02-01", "Germany returns to unrestricted submarine warfare",
                  "1917-04-06", "The USA enters the war",
                  "1917-12-15", "Russia signs armistice with Germany",
                  "1918-03-04", "British troops intervene in the Russian civil war",
                  "1918-03-21", "Final German offensive",
                  "1918-09-26", "Final allied offensive begins at Meusse-Argonne",
-                 "1918-11-05", "Armistice",
+                 "1918-11-05", "Armistice talks",
                  "1918-12-01", "British and American forces enter Germany",
                  "1919-01-18", "Peace conference begins at Paris",
                  "1919-06-28", "Treat of Versailles signed",
@@ -42,7 +43,7 @@ phases <- tribble(~start_date, ~phase,
                  ) %>%
   mutate(start_date = as.Date(start_date))
 
-#------------------Naval battle dates (that UK involved in)"
+#------------------Naval battle dates (that UK involved in)----------------
 # From
 # https://en.wikipedia.org/wiki/List_of_naval_battles#World_War_I_(1914%E2%80%9318)
 # Note the battle of Penang, Cocos, Cape Sarych, Gotland, Kirpen Island are
