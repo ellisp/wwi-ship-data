@@ -111,7 +111,7 @@ sea_col <- "#DCEAFA"
 comment_col <- "grey50"
 
 #-------------main loop------------------
-# Takes a bit over an hour to run this. 
+# Takes a bit over 30 minutes to run this, if covering 1/1/1914 to 31/12/1919. 
 for(i in 1:length(all_dates)){
   the_date <- all_dates[i]
   ships_data <- d2 %>%
